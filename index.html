@@ -24,7 +24,7 @@
 <div class="box">
     <div class="title-group">
         <div class="logo">Tahmini Teşvik Ödeme Hesaplayıcı</div>
-        <div class="sub">Dishekimibilal Special Edition v3.0</div>
+        <div class="sub">Dishekimibilal Special Edition v3.1</div>
     </div>
     
     <label>Unvan Seçimi</label>
@@ -85,25 +85,32 @@ function hesapla() {
         return;
     }
 
+    // 1. Ortalama Puan Hesaplama: (Hastane ortalama puani / O ayki gün sayısı) * ortalama gün sayısı
     let ortalamaPuan = 0;
     if (ayGunSayisi > 0) {
         ortalamaPuan = (hastaneOrtaPuan / ayGunSayisi) * ortaGunSayisi;
     }
 
+    // 2. İlave Puan Hesaplama: Hastane ortalaması * ilave oranı
     let ilavePuan = hastaneOrtaPuan * (ilaveOraniYuzde / 100);
-    let toplamPuan = anaPuan + ilavePuan + ortalamaPuan;
+
+    // Katsayı Belirleme (Pratisyen: 1.2 , Uzman: 1.5)
+    let katsayi = (unvan === 'pratisyen') ? 1.2 : 1.5;
+
+    // Taban Puan Kombinasyonu (Puan + Ortalama Puan)
+    let tabanPuan = anaPuan + ortalamaPuan;
 
     const netVergiCarpani = 1 - (vergiYuzde / 100);
-    let katsayi = (unvan === 'pratisyen') ? 1.2 : 1.5;
     
-    let t = ((toplamPuan * katsayi) * deks) * netVergiCarpani - 402;
+    // YENİ FORMÜL: (((Puan + Ortalama Puan) * Katsayı) + İlave Puan) * deks * vergi kesintisi - 402
+    let t = (((tabanPuan * katsayi) + ilavePuan) * deks) * netVergiCarpani - 402;
     
     s.style.display = 'block';
     s.style.color = '#00ff88';
     s.style.borderColor = '#00ff88';
     s.innerHTML = `Hesaplanan Ortalama Puan: ${ortalamaPuan.toFixed(2)}<br>` +
                   `Hesaplanan İlave Puan: ${ilavePuan.toFixed(2)}<br>` +
-                  `Toplam Puan: ${toplamPuan.toFixed(2)}<br><br>` +
+                  `Katsayı Öncesi Puan (Puan+Orta): ${tabanPuan.toFixed(2)}<br><br>` +
                   `<strong>Net Teşvik Tutarı: ${t.toFixed(2)}</strong>`;
 }
 </script>
