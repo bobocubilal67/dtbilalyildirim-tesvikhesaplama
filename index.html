@@ -59,11 +59,11 @@ function hesapla() {
     let t;
 
     if (unvan === 'pratisyen') {
-        // Pratisyen Formülü: ((Puan * 1.2) * deks) * vergi kesintisi - 402
+        // Pratisyen katsayısı: 1.2
         t = ((p * 1.2) * d) * netVergiCarpani - 402;
     } else {
-        // Uzman Formülü: ((Puan * 1.5) * deks) * vergi kesintisi - 402
-        t = ((p * 1.2) * d) * netVergiCarpani - 402;
+        // Uzman katsayısı: 1.5
+        t = ((p * 1.5) * d) * netVergiCarpani - 402;
     }
     
     s.style.display = 'block';
