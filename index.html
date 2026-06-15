@@ -3,33 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dishekimibilal | Teşvik Hesaplayıcı</title>
+    <title>Dishekimibilal | Gelişmiş Teşvik Hesaplayıcı</title>
     <style>
         body { background-color: #0b0f19; color: #ffffff; font-family: sans-serif; text-align: center; padding: 20px; }
-        .box { background-color: #151d30; padding: 25px; border-radius: 10px; border: 1px solid #00ff88; max-width: 360px; margin: auto; }
-        input, select { width: 90%; padding: 10px; margin: 10px 0; background: #0b0f19; border: 1px solid #233554; color: #fff; border-radius: 5px; font-size: 14px; }
-        button { width: 95%; padding: 12px; background: #00ff88; color: #0b0f19; border: none; font-weight: bold; border-radius: 5px; cursor: pointer; font-size: 15px; }
+        .box { background-color: #151d30; padding: 25px; border-radius: 10px; border: 1px solid #00ff88; max-width: 400px; margin: auto; text-align: left; }
+        .title-group { text-align: center; }
+        input, select { width: 100%; padding: 10px; margin: 8px 0; background: #0b0f19; border: 1px solid #233554; color: #fff; border-radius: 5px; font-size: 14px; box-sizing: border-box; }
+        label { font-size: 13px; color: #ccd6f6; font-weight: bold; display: block; margin-top: 10px; }
+        .section-title { font-size: 14px; color: #00ff88; border-bottom: 1px dashed #233554; padding-bottom: 5px; margin-top: 15px; font-weight: bold; }
+        button { width: 100%; padding: 12px; background: #00ff88; color: #0b0f19; border: none; font-weight: bold; border-radius: 5px; cursor: pointer; font-size: 15px; margin-top: 15px; }
         .logo { color: #00ff88; font-size: 20px; font-weight: bold; margin-bottom: 5px; }
         .sub { color: #8892b0; font-size: 12px; margin-bottom: 20px; }
-        .warn { color: #ffb703; font-size: 13px; margin: 15px 0; font-style: italic; }
-        .res { margin-top: 15px; padding: 10px; border: 1px solid #00ff88; display: none; background: rgba(0,255,136,0.1); color: #00ff88; font-weight: bold; }
-        .credit { margin-top: 25px; font-size: 13px; font-weight: bold; color: #00ff88; letter-spacing: 1px; }
+        .warn { text-align: center; color: #ffb703; font-size: 13px; margin: 15px 0; font-style: italic; }
+        .res { margin-top: 15px; padding: 10px; border: 1px solid #00ff88; display: none; background: rgba(0,255,136,0.1); color: #00ff88; font-weight: bold; text-align: center; }
+        .credit { text-align: center; margin-top: 25px; font-size: 13px; font-weight: bold; color: #00ff88; letter-spacing: 1px; }
     </style>
 </head>
 <body>
 
 <div class="box">
-    <div class="logo">Tahmini Teşvik Ödeme Hesaplayıcı</div>
-    <div class="sub">Dishekimibilal Special Edition</div>
+    <div class="title-group">
+        <div class="logo">Tahmini Teşvik Ödeme Hesaplayıcı</div>
+        <div class="sub">Dishekimibilal Special Edition v3.0</div>
+    </div>
     
+    <label>Unvan Seçimi</label>
     <select id="unvan">
         <option value="pratisyen">Pratisyen Dişhekimi</option>
         <option value="uzman">Uzman Dişhekimi</option>
     </select>
 
-    <input type="number" id="puan" placeholder="Kullanıcı Puanı">
-    <input type="number" id="deks" placeholder="Deks Değeri">
-    <input type="number" id="vergi" placeholder="Vergi Kesintisi (%)">
+    <label>Kullanıcı Puanı</label>
+    <input type="number" id="puan" placeholder="Puanınızı girin" step="any">
+
+    <div class="section-title">Ortalama Puan Hesaplama (Varsa)</div>
+    <label>Hastane Ortalama Puanı</label>
+    <input type="number" id="hastaneOrtaPuan" placeholder="Örn: 10000" step="any">
+    <label>O Ayki Gün Sayısı</label>
+    <input type="number" id="ayGunSayisi" placeholder="Örn: 30" step="any">
+    <label>Ortalama Gün Sayısı (Çalışılan)</label>
+    <input type="number" id="ortaGunSayisi" placeholder="Örn: 22" step="any">
+
+    <div class="section-title">İlave Puan Hesaplama (Varsa)</div>
+    <label>İlave Oranı (%)</label>
+    <input type="number" id="ilaveOrani" placeholder="Örn: 15" step="any">
+
+    <div class="section-title">Genel Parametreler</div>
+    <label>Deks Değeri</label>
+    <input type="number" id="deks" placeholder="Deks değerini girin" step="any">
+    <label>Vergi Kesintisi (%)</label>
+    <input type="number" id="vergi" placeholder="Örn: 18" step="any">
     
     <button onclick="hesapla()">Teşvik Hesapla</button>
     
@@ -42,34 +65,55 @@
 <script>
 function hesapla() {
     const unvan = document.getElementById('unvan').value;
-    const p = parseFloat(document.getElementById('puan').value);
-    const d = parseFloat(document.getElementById('deks').value);
-    const v = parseFloat(document.getElementById('vergi').value);
     const s = document.getElementById('sonuc');
 
-    if (isNaN(p) || isNaN(d) || isNaN(v)) {
+    // Ana girdiler (Boşsa 0 kabul edilir)
+    const anaPuan = parseFloat(document.getElementById('puan').value) || 0;
+    const deks = parseFloat(document.getElementById('deks').value);
+    const vergiYuzde = parseFloat(document.getElementById('vergi').value);
+
+    // Ortalama Puan girdileri
+    const hastaneOrtaPuan = parseFloat(document.getElementById('hastaneOrtaPuan').value) || 0;
+    const ayGunSayisi = parseFloat(document.getElementById('ayGunSayisi').value) || 0;
+    const ortaGunSayisi = parseFloat(document.getElementById('ortaGunSayisi').value) || 0;
+
+    // İlave Puan girdileri
+    const ilaveOraniYuzde = parseFloat(document.getElementById('ilaveOrani').value) || 0;
+
+    // Zorunlu alan kontrolü (Deks ve Vergi mutlaka girilmeli)
+    if (isNaN(deks) || isNaN(vergiYuzde)) {
         s.style.display = 'block';
         s.style.color = '#ff4646';
         s.style.borderColor = '#ff4646';
-        s.innerText = 'Eksik alanları doldurun!';
+        s.innerText = 'Hata: Deks ve Vergi oranını mutlaka girin!';
         return;
     }
 
-    const netVergiCarpani = 1 - (v / 100);
-    let t;
-
-    if (unvan === 'pratisyen') {
-        // Pratisyen katsayısı: 1.2
-        t = ((p * 1.2) * d) * netVergiCarpani - 402;
-    } else {
-        // Uzman katsayısı: 1.5
-        t = ((p * 1.5) * d) * netVergiCarpani - 402;
+    // 1. Ortalama Puan Hesaplama: (Hastane ortalama puani / O ayki gün sayısı) * ortalama gün sayısı
+    let ortalamaPuan = 0;
+    if (ayGunSayisi > 0) {
+        ortalamaPuan = (hastaneOrtaPuan / ayGunSayisi) * ortaGunSayisi;
     }
+
+    // 2. İlave Puan Hesaplama: Hastane ortalaması * ilave oranı
+    let ilavePuan = hastaneOrtaPuan * (ilaveOraniYuzde / 100);
+
+    // Toplam Puan Kombinasyonu
+    let toplamPuan = anaPuan + ilavePuan + ortalamaPuan;
+
+    const netVergiCarpani = 1 - (vergiYuzde / 100);
+    let katsayi = (unvan === 'pratisyen') ? 1.2 : 1.5;
+    
+    // Formül: (((Toplam Puan) * Katsayı) * deks) * vergi kesintisi - 402
+    let t = ((toplamPuan * katsayi) * deks) * netVergiCarpani - 402;
     
     s.style.display = 'block';
     s.style.color = '#00ff88';
     s.style.borderColor = '#00ff88';
-    s.innerText = `Hesaplanan Teşvik: ${t.toFixed(2)}`;
+    s.innerHTML = `Hesaplanan Ortalama Puan: ${ortalamaPuan.toFixed(2)}<br>` +
+                  `Hesaplanan İlave Puan: ${ilavePuan.toFixed(2)}<br>` +
+                  `Toplam Puan: ${toplamPuan.toFixed(2)}<br><br>` +
+                  `<strong>Net Teşvik Tutarı: ${t.toFixed(2)}</strong>`;
 }
 </script>
 
