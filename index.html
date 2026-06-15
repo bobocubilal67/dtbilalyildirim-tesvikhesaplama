@@ -59,7 +59,7 @@
     <div class="warn">Bu Rakamlar Yaklaşık Hesaplamadir Gençler 😉</div>
     <div id="sonuc" class="res"></div>
     
-    <div class="credit">POWERED BY DISHEKİMİBİLAL &copy; 2026</div>
+    <div class="credit">POWERED BY DİSHEKİMİBİLAL &copy; 2026</div>
 </div>
 
 <script>
@@ -67,20 +67,16 @@ function hesapla() {
     const unvan = document.getElementById('unvan').value;
     const s = document.getElementById('sonuc');
 
-    // Ana girdiler (Boşsa 0 kabul edilir)
     const anaPuan = parseFloat(document.getElementById('puan').value) || 0;
     const deks = parseFloat(document.getElementById('deks').value);
     const vergiYuzde = parseFloat(document.getElementById('vergi').value);
 
-    // Ortalama Puan girdileri
     const hastaneOrtaPuan = parseFloat(document.getElementById('hastaneOrtaPuan').value) || 0;
     const ayGunSayisi = parseFloat(document.getElementById('ayGunSayisi').value) || 0;
     const ortaGunSayisi = parseFloat(document.getElementById('ortaGunSayisi').value) || 0;
 
-    // İlave Puan girdileri
     const ilaveOraniYuzde = parseFloat(document.getElementById('ilaveOrani').value) || 0;
 
-    // Zorunlu alan kontrolü (Deks ve Vergi mutlaka girilmeli)
     if (isNaN(deks) || isNaN(vergiYuzde)) {
         s.style.display = 'block';
         s.style.color = '#ff4646';
@@ -89,22 +85,17 @@ function hesapla() {
         return;
     }
 
-    // 1. Ortalama Puan Hesaplama: (Hastane ortalama puani / O ayki gün sayısı) * ortalama gün sayısı
     let ortalamaPuan = 0;
     if (ayGunSayisi > 0) {
         ortalamaPuan = (hastaneOrtaPuan / ayGunSayisi) * ortaGunSayisi;
     }
 
-    // 2. İlave Puan Hesaplama: Hastane ortalaması * ilave oranı
     let ilavePuan = hastaneOrtaPuan * (ilaveOraniYuzde / 100);
-
-    // Toplam Puan Kombinasyonu
     let toplamPuan = anaPuan + ilavePuan + ortalamaPuan;
 
     const netVergiCarpani = 1 - (vergiYuzde / 100);
     let katsayi = (unvan === 'pratisyen') ? 1.2 : 1.5;
     
-    // Formül: (((Toplam Puan) * Katsayı) * deks) * vergi kesintisi - 402
     let t = ((toplamPuan * katsayi) * deks) * netVergiCarpani - 402;
     
     s.style.display = 'block';
