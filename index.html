@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teşvik Hesaplayıcı</title>
+    <title>Dishekimibilal | Teşvik Hesaplayıcı</title>
     <style>
         body { background-color: #0b0f19; color: #ffffff; font-family: sans-serif; text-align: center; padding: 20px; }
         .box { background-color: #151d30; padding: 25px; border-radius: 10px; border: 1px solid #00ff88; max-width: 360px; margin: auto; }
-        input { width: 90%; padding: 10px; margin: 10px 0; background: #0b0f19; border: 1px solid #233554; color: #fff; border-radius: 5px; }
-        button { width: 95%; padding: 12px; background: #00ff88; color: #0b0f19; border: none; font-weight: bold; border-radius: 5px; cursor: pointer; }
+        input, select { width: 90%; padding: 10px; margin: 10px 0; background: #0b0f19; border: 1px solid #233554; color: #fff; border-radius: 5px; font-size: 14px; }
+        button { width: 95%; padding: 12px; background: #00ff88; color: #0b0f19; border: none; font-weight: bold; border-radius: 5px; cursor: pointer; font-size: 15px; }
         .logo { color: #00ff88; font-size: 20px; font-weight: bold; margin-bottom: 5px; }
         .sub { color: #8892b0; font-size: 12px; margin-bottom: 20px; }
         .warn { color: #ffb703; font-size: 13px; margin: 15px 0; font-style: italic; }
@@ -20,22 +20,28 @@
 
 <div class="box">
     <div class="logo">Tahmini Teşvik Ödeme Hesaplayıcı</div>
-    <div class="sub">Incentive Calculation Engine v2.0</div>
+    <div class="sub">Dishekimibilal Special Edition</div>
     
+    <select id="unvan">
+        <option value="pratisyen">Pratisyen Dişhekimi</option>
+        <option value="uzman">Uzman Dişhekimi</option>
+    </select>
+
     <input type="number" id="puan" placeholder="Kullanıcı Puanı">
     <input type="number" id="deks" placeholder="Deks Değeri">
     <input type="number" id="vergi" placeholder="Vergi Kesintisi (%)">
     
     <button onclick="hesapla()">Teşvik Hesapla</button>
     
-    <div class="warn">Bu Rakamlar Yaklaşık Hesaplamadır Gençler. YTD 😉</div>
+    <div class="warn">Bu Rakamlar Yaklaşık Hesaplamadir Gençler 😉</div>
     <div id="sonuc" class="res"></div>
     
-    <div class="credit">POWERED BY BOBOCUBİLAL &copy; 2026</div>
+    <div class="credit">POWERED BY DISHEKİMİBİLAL &copy; 2026</div>
 </div>
 
 <script>
 function hesapla() {
+    const unvan = document.getElementById('unvan').value;
     const p = parseFloat(document.getElementById('puan').value);
     const d = parseFloat(document.getElementById('deks').value);
     const v = parseFloat(document.getElementById('vergi').value);
@@ -49,7 +55,16 @@ function hesapla() {
         return;
     }
 
-    let t = ((p * 1.2) * d) * (1 - (v / 100)) - 400;
+    const netVergiCarpani = 1 - (v / 100);
+    let t;
+
+    if (unvan === 'pratisyen') {
+        // Pratisyen Formülü: ((Puan * 1.2) * deks) * vergi kesintisi - 402
+        t = ((p * 1.2) * d) * netVergiCarpani - 402;
+    } else {
+        // Uzman Formülü: ((Puan * 1.2) * deks) * vergi kesintisi - 402
+        t = ((p * 1.2) * d) * netVergiCarpani - 402;
+    }
     
     s.style.display = 'block';
     s.style.color = '#00ff88';
